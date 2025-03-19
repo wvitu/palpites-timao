@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Palpites do Timão</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        input { margin: 5px; }
+        .painel { margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+
+    <h1>⚽ Palpites Corinthians 2025</h1>
+
+    <div class="painel">
+        <h2>Registrar Palpites</h2>
+        <h3>Vitor</h3>
+        Palpite Torcedor: <input type="text" id="vitor-torcedor" placeholder="Ex: 3x0"><br>
+        Palpite Realista: <input type="text" id="vitor-realista" placeholder="Ex: 1x1"><br>
+
+        <h3>Matheus</h3>
+        Palpite Torcedor: <input type="text" id="matheus-torcedor" placeholder="Ex: 2x0"><br>
+        Palpite Realista: <input type="text" id="matheus-realista" placeholder="Ex: 1x2"><br>
+
+        <button onclick="registrarPalpites()">Salvar Palpites</button>
+    </div>
+
+    <div class="painel">
+        <h2>Resultado da Partida</h2>
+        Resultado Real: <input type="text" id="resultado-real" placeholder="Ex: 1x1"><br>
+        <button onclick="registrarResultado()">Verificar e Pontuar</button>
+    </div>
+
+    <div class="painel">
+        <h2>Ranking Atual</h2>
+        <p id="ranking">Vitor: 0 pts | Matheus: 0 pts</p>
+    </div>
+
+    <script>
+        let pontuacao = {
+            Vitor: 0,
+            Matheus: 0
+        };
+
+        let palpites = {
+            Vitor: { torcedor: '', realista: '' },
+            Matheus: { torcedor: '', realista: '' }
+        };
+
+        function registrarPalpites() {
+            palpites.Vitor.torcedor = document.getElementById('vitor-torcedor').value;
+            palpites.Vitor.realista = document.getElementById('vitor-realista').value;
+
+            palpites.Matheus.torcedor = document.getElementById('matheus-torcedor').value;
+            palpites.Matheus.realista = document.getElementById('matheus-realista').value;
+
+            alert('Palpites registrados!');
+            console.log(palpites);
+        }
+
+        function registrarResultado() {
+            let resultado = document.getElementById('resultado-real').value;
+
+            // Checa cada palpite
+            for (let user in palpites) {
+                if (palpites[user].torcedor === resultado || palpites[user].realista === resultado) {
+                    pontuacao[user] += 1;
+                    alert(`${user} pontuou!`);
+                }
+            }
+
+            atualizarRanking();
+        }
+
+        function atualizarRanking() {
+            document.getElementById('ranking').innerText = 
+                `Vitor: ${pontuacao.Vitor} pts | Matheus: ${pontuacao.Matheus} pts`;
+        }
+    </script>
+
+</body>
+</html>
