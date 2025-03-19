@@ -120,17 +120,26 @@ function carregarHistorico() {
     `;
 
     historico.forEach(jogo => {
+        if (!jogo.Vitor || !jogo.Matheus) {
+            console.error("Erro: Dados do jogo inválidos", jogo);
+            return;
+        }
+
         let resultado = jogo.resultado ? `${jogo.resultado.time1} x ${jogo.resultado.time2}` : "Aguardando";
+
         tabela.innerHTML += `
             <tr>
                 <td>${jogo.partida}</td>
-                <td>${jogo.Vitor.torcedor.time1}x${jogo.Vitor.torcedor.time2} / ${jogo.Vitor.realista.time1}x${jogo.Vitor.realista.time2}</td>
-                <td>${jogo.Matheus.torcedor.time1}x${jogo.Matheus.torcedor.time2} / ${jogo.Matheus.realista.time1}x${jogo.Matheus.realista.time2}</td>
+                <td>${jogo.Vitor.torcedor ? `${jogo.Vitor.torcedor.time1}x${jogo.Vitor.torcedor.time2}` : "N/A"} /
+                    ${jogo.Vitor.realista ? `${jogo.Vitor.realista.time1}x${jogo.Vitor.realista.time2}` : "N/A"}</td>
+                <td>${jogo.Matheus.torcedor ? `${jogo.Matheus.torcedor.time1}x${jogo.Matheus.torcedor.time2}` : "N/A"} /
+                    ${jogo.Matheus.realista ? `${jogo.Matheus.realista.time1}x${jogo.Matheus.realista.time2}` : "N/A"}</td>
                 <td>${resultado}</td>
             </tr>
         `;
     });
 }
+
 
 async function salvarHistoricoNoServidor(jogo) {
     try {
