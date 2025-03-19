@@ -56,7 +56,6 @@ function registrarPalpites() {
     localStorage.setItem('historico', JSON.stringify(historico));
 
     alert('Palpites registrados!');
-    carregarHistorico(); // Atualiza a tabela imediatamente
 }
 
 function registrarResultado() {
@@ -71,23 +70,12 @@ function registrarResultado() {
 
     if (jogo) {
         jogo.resultado = resultado;
-        let pontuou = [];
 
         for (let user of ['Vitor', 'Matheus']) {
-            if (comparaPlacar(resultado, jogo[user].torcedor)) {
+            if (comparaPlacar(resultado, jogo[user].torcedor) || comparaPlacar(resultado, jogo[user].realista)) {
                 pontuacao[user]++;
-                pontuou.push(`${user} acertou o palpite TORCEDOR!`);
+                alert(`${user} pontuou!`);
             }
-            if (comparaPlacar(resultado, jogo[user].realista)) {
-                pontuacao[user]++;
-                pontuou.push(`${user} acertou o palpite REALISTA!`);
-            }
-        }
-
-        if (pontuou.length > 0) {
-            alert(pontuou.join("\n"));
-        } else {
-            alert("Ninguém acertou o palpite.");
         }
 
         localStorage.setItem('pontuacao', JSON.stringify(pontuacao));
@@ -135,16 +123,27 @@ function carregarHistorico() {
         tabela.innerHTML += `
             <tr>
                 <td>${jogo.partida}</td>
-                <td>
-                    ${jogo.Vitor.torcedor.time1}x${jogo.Vitor.torcedor.time2} (Torcedor) <br> 
-                    ${jogo.Vitor.realista.time1}x${jogo.Vitor.realista.time2} (Realista)
-                </td>
-                <td>
-                    ${jogo.Matheus.torcedor.time1}x${jogo.Matheus.torcedor.time2} (Torcedor) <br> 
-                    ${jogo.Matheus.realista.time1}x${jogo.Matheus.realista.time2} (Realista)
-                </td>
+                <td>${jogo.Vitor.torcedor.time1}x${jogo.Vitor.torcedor.time2} / ${jogo.Vitor.realista.time1}x${jogo.Vitor.realista.time2}</td>
+                <td>${jogo.Matheus.torcedor.time1}x${jogo.Matheus.torcedor.time2} / ${jogo.Matheus.realista.time1}x${jogo.Matheus.realista.time2}</td>
                 <td>${resultado}</td>
             </tr>
         `;
     });
 }
+
+// 🔹 NOVO: Função para salvar no PHP
+function salvarNoServidor() {
+    fetch('https://SEU_DOMINIO/salvar_historico.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(historico)
+    })
+    .then(response => response.json())
+    .then(data => alert(data.message))
+    .catch(error => console.error('Erro ao salvar:', error));
+}
+
+// 🔹 Botão "Adicionar Partida ao Histórico"
+document.body.innerHTML += '<button onclick="salvarNoServidor()">Adicionar Partida ao Histórico</button>';
