@@ -2,16 +2,13 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Palpites do Timão</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 20px; }
-        input { margin: 5px; }
-        .painel { margin-bottom: 20px; }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Palpites Corinthians 2025</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <h1>⚽ Palpites Corinthians 2025</h1>
+    <h1>⚽ Palpites Jogos do Corinthians 2025</h1>
 
     <div class="painel">
         <h2>Registrar Palpites</h2>
@@ -37,47 +34,6 @@
         <p id="ranking">Vitor: 0 pts | Matheus: 0 pts</p>
     </div>
 
-    <script>
-        let pontuacao = {
-            Vitor: 0,
-            Matheus: 0
-        };
-
-        let palpites = {
-            Vitor: { torcedor: '', realista: '' },
-            Matheus: { torcedor: '', realista: '' }
-        };
-
-        function registrarPalpites() {
-            palpites.Vitor.torcedor = document.getElementById('vitor-torcedor').value;
-            palpites.Vitor.realista = document.getElementById('vitor-realista').value;
-
-            palpites.Matheus.torcedor = document.getElementById('matheus-torcedor').value;
-            palpites.Matheus.realista = document.getElementById('matheus-realista').value;
-
-            alert('Palpites registrados!');
-            console.log(palpites);
-        }
-
-        function registrarResultado() {
-            let resultado = document.getElementById('resultado-real').value;
-
-            // Checa cada palpite
-            for (let user in palpites) {
-                if (palpites[user].torcedor === resultado || palpites[user].realista === resultado) {
-                    pontuacao[user] += 1;
-                    alert(`${user} pontuou!`);
-                }
-            }
-
-            atualizarRanking();
-        }
-
-        function atualizarRanking() {
-            document.getElementById('ranking').innerText = 
-                `Vitor: ${pontuacao.Vitor} pts | Matheus: ${pontuacao.Matheus} pts`;
-        }
-    </script>
-
+    <script src="app.js"></script>
 </body>
 </html>

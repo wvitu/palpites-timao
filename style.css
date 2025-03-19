@@ -1,0 +1,39 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    background-color: #f0f0f0;
+}
+
+h1 {
+    color: #111;
+}
+
+.painel {
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-shadow: 0 0 5px rgba(0,0,0,0.1);
+}
+
+input {
+    margin: 5px;
+    padding: 5px;
+}
+
+button {
+    padding: 5px 10px;
+    margin-top: 10px;
+    background-color: #222;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #444;
+}
+
+#ranking {
+    font-weight: bold;
+}
