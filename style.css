@@ -1,39 +1,51 @@
 body {
     font-family: Arial, sans-serif;
-    margin: 20px;
-    background-color: #f0f0f0;
+    background-color: #111;
+    color: #f0f0f0;
+    margin: 0;
+    padding: 20px;
 }
 
-h1 {
-    color: #111;
+h1, h2 {
+    text-align: center;
+    color: #fff;
 }
 
-.painel {
-    background: white;
-    padding: 15px;
-    border-radius: 8px;
-    margin-bottom: 20px;
-    box-shadow: 0 0 5px rgba(0,0,0,0.1);
-}
-
-input {
-    margin: 5px;
+input[type="text"], input[type="number"] {
     padding: 5px;
+    margin: 5px;
+    border-radius: 5px;
+    border: none;
+    width: 60px;
+    text-align: center;
 }
 
 button {
-    padding: 5px 10px;
-    margin-top: 10px;
-    background-color: #222;
+    background-color: #0b5ed7;
     color: white;
+    padding: 10px 20px;
     border: none;
+    margin: 10px 0;
+    border-radius: 5px;
     cursor: pointer;
+    transition: 0.3s;
 }
 
 button:hover {
-    background-color: #444;
+    background-color: #084298;
+}
+
+#painel-palpites, #painel-resultado {
+    margin-top: 20px;
 }
 
 #ranking {
+    text-align: center;
     font-weight: bold;
+    margin-top: 20px;
+}
+
+label {
+    display: block;
+    margin: 10px 0 5px;
 }

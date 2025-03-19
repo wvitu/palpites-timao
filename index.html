@@ -8,24 +8,29 @@
 </head>
 <body>
 
-    <h1>⚽ Palpites Jogos do Corinthians 2025</h1>
+    <h1>⚽ Palpites do Corinthians</h1>
 
     <div class="painel">
+        <h2>Definir Partida</h2>
+        <input type="text" id="partida" placeholder="Ex: Corinthians x Palmeiras">
+        <button onclick="configurarPartida()">Confirmar Partida</button>
+    </div>
+
+    <div class="painel" id="painel-palpites" style="display:none">
         <h2>Registrar Palpites</h2>
+
         <h3>Vitor</h3>
-        Palpite Torcedor: <input type="text" id="vitor-torcedor" placeholder="Ex: 3x0"><br>
-        Palpite Realista: <input type="text" id="vitor-realista" placeholder="Ex: 1x1"><br>
+        <div id="palpite-vitor"></div>
 
         <h3>Matheus</h3>
-        Palpite Torcedor: <input type="text" id="matheus-torcedor" placeholder="Ex: 2x0"><br>
-        Palpite Realista: <input type="text" id="matheus-realista" placeholder="Ex: 1x2"><br>
+        <div id="palpite-matheus"></div>
 
         <button onclick="registrarPalpites()">Salvar Palpites</button>
     </div>
 
-    <div class="painel">
+    <div class="painel" id="painel-resultado" style="display:none">
         <h2>Resultado da Partida</h2>
-        Resultado Real: <input type="text" id="resultado-real" placeholder="Ex: 1x1"><br>
+        <div id="resultado-partida"></div>
         <button onclick="registrarResultado()">Verificar e Pontuar</button>
     </div>
 
