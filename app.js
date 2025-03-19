@@ -133,7 +133,7 @@ function carregarHistorico() {
 
 // 🔹 NOVO: Função para salvar no PHP
 function salvarNoServidor() {
-    fetch('https://SEU_DOMINIO/salvar_historico.php', {
+    fetch('https://palpites-timao.vercel.app/', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
