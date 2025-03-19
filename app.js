@@ -1,95 +1,83 @@
-let pontuacao = {
-    Vitor: 0,
-    Matheus: 0
-};
-
-let palpites = {
-    Vitor: { torcedor: {}, realista: {} },
-    Matheus: { torcedor: {}, realista: {} }
-};
-
+let pontuacao = JSON.parse(localStorage.getItem('pontuacao')) || { Vitor: 0, Matheus: 0 };
+let palpites = JSON.parse(localStorage.getItem('palpites')) || {};
+let historico = JSON.parse(localStorage.getItem('historico')) || [];
 let times = [];
 
 window.onload = function () {
-    if (localStorage.getItem('pontuacao')) {
-        pontuacao = JSON.parse(localStorage.getItem('pontuacao'));
-        atualizarRanking();
-    }
+    atualizarRanking();
+    carregarHistorico();
 };
 
 function configurarPartida() {
     let partidaInput = document.getElementById('partida').value.trim();
-
     if (!partidaInput.includes('x')) {
         alert('Formato inválido. Use "TimeA x TimeB"');
         return;
     }
 
     times = partidaInput.split('x').map(t => t.trim());
-
-    gerarCamposPalpites();
-    gerarCamposResultado();
-
     document.getElementById('painel-palpites').style.display = 'block';
     document.getElementById('painel-resultado').style.display = 'block';
+    gerarCamposPalpites();
+    gerarCamposResultado();
 }
 
 function gerarCamposPalpites() {
-    let palpiteVitor = document.getElementById('palpite-vitor');
-    let palpiteMatheus = document.getElementById('palpite-matheus');
-
-    palpiteVitor.innerHTML = gerarInputs('vitor');
-    palpiteMatheus.innerHTML = gerarInputs('matheus');
+    document.getElementById('palpite-vitor').innerHTML = gerarInputs('vitor');
+    document.getElementById('palpite-matheus').innerHTML = gerarInputs('matheus');
 }
 
 function gerarCamposResultado() {
-    let resultado = document.getElementById('resultado-partida');
-    resultado.innerHTML = gerarInputs('resultado');
+    document.getElementById('resultado-partida').innerHTML = gerarInputs('resultado');
 }
 
 function gerarInputs(prefixo) {
-    return `
-        ${times[0]}: <input type="number" id="${prefixo}-time1" min="0" max="10"> 
-        x 
-        <input type="number" id="${prefixo}-time2" min="0" max="10"> ${times[1]}
-        <br>
-        ${prefixo !== 'resultado' ? `
-        ${times[0]} (realista): <input type="number" id="${prefixo}-real-time1" min="0" max="10"> 
-        x 
-        <input type="number" id="${prefixo}-real-time2" min="0" max="10"> ${times[1]}
-        <br>` : ''}
-    `;
+    if (prefixo === 'resultado') {
+        return `${times[0]}: <input type="number" id="resultado-real-time1" min="0" max="10"> x 
+                <input type="number" id="resultado-real-time2" min="0" max="10"> ${times[1]}`;
+    } else {
+        return `${times[0]} (realista): <input type="number" id="${prefixo}-real-time1" min="0" max="10"> x 
+                <input type="number" id="${prefixo}-real-time2" min="0" max="10"> ${times[1]}<br>
+                ${times[0]} (torcedor): <input type="number" id="${prefixo}-torcedor-time1" min="0" max="10"> x 
+                <input type="number" id="${prefixo}-torcedor-time2" min="0" max="10"> ${times[1]}`;
+    }
 }
 
 function registrarPalpites() {
-    palpites.Vitor.torcedor = pegarPlacar('vitor-time1', 'vitor-time2');
-    palpites.Vitor.realista = pegarPlacar('vitor-real-time1', 'vitor-real-time2');
-    palpites.Matheus.torcedor = pegarPlacar('matheus-time1', 'matheus-time2');
-    palpites.Matheus.realista = pegarPlacar('matheus-real-time1', 'matheus-real-time2');
-
+    palpites[times.join(' x ')] = {
+        Vitor: {
+            torcedor: pegarPlacar('vitor-torcedor-time1', 'vitor-torcedor-time2'),
+            realista: pegarPlacar('vitor-real-time1', 'vitor-real-time2')
+        },
+        Matheus: {
+            torcedor: pegarPlacar('matheus-torcedor-time1', 'matheus-torcedor-time2'),
+            realista: pegarPlacar('matheus-real-time1', 'matheus-real-time2')
+        }
+    };
+    localStorage.setItem('palpites', JSON.stringify(palpites));
     alert('Palpites registrados!');
 }
 
 function registrarResultado() {
-    const resultado = pegarPlacar('resultado-time1', 'resultado-time2');
-
+    let resultado = pegarPlacar('resultado-real-time1', 'resultado-real-time2');
     if (!validarPlacar(resultado)) {
         alert('Placar inválido! Apenas números entre 0 e 10.');
         return;
     }
-
-    for (let user in palpites) {
-        if (
-            comparaPlacar(resultado, palpites[user].torcedor) ||
-            comparaPlacar(resultado, palpites[user].realista)
-        ) {
+    
+    let partida = times.join(' x ');
+    for (let user in palpites[partida]) {
+        if (comparaPlacar(resultado, palpites[partida][user].realista) || 
+            comparaPlacar(resultado, palpites[partida][user].torcedor)) {
             pontuacao[user]++;
             alert(`${user} pontuou!`);
         }
     }
-
+    historico.push({ partida, palpites: palpites[partida], resultado });
     localStorage.setItem('pontuacao', JSON.stringify(pontuacao));
+    localStorage.setItem('historico', JSON.stringify(historico));
     atualizarRanking();
+    carregarHistorico();
 }
 
 function pegarPlacar(id1, id2) {
@@ -100,11 +88,7 @@ function pegarPlacar(id1, id2) {
 }
 
 function validarPlacar(placar) {
-    return (
-        !isNaN(placar.time1) && !isNaN(placar.time2) &&
-        placar.time1 >= 0 && placar.time1 <= 10 &&
-        placar.time2 >= 0 && placar.time2 <= 10
-    );
+    return !isNaN(placar.time1) && !isNaN(placar.time2) && placar.time1 >= 0 && placar.time1 <= 10 && placar.time2 >= 0 && placar.time2 <= 10;
 }
 
 function comparaPlacar(p1, p2) {
@@ -112,6 +96,15 @@ function comparaPlacar(p1, p2) {
 }
 
 function atualizarRanking() {
-    document.getElementById('ranking').innerText =
-        `Vitor: ${pontuacao.Vitor} pts | Matheus: ${pontuacao.Matheus} pts`;
+    document.getElementById('ranking').innerText = `Vitor: ${pontuacao.Vitor} pts | Matheus: ${pontuacao.Matheus} pts`;
+}
+
+function carregarHistorico() {
+    let tabela = document.getElementById('historico');
+    tabela.innerHTML = `<tr><th>Partida</th><th>Vitor (Torcedor / Realista)</th><th>Matheus (Torcedor / Realista)</th><th>Resultado</th></tr>`;
+    historico.forEach(({ partida, palpites, resultado }) => {
+        tabela.innerHTML += `<tr><td>${partida}</td><td>${palpites.Vitor.torcedor.time1}-${palpites.Vitor.torcedor.time2} / ${palpites.Vitor.realista.time1}-${palpites.Vitor.realista.time2}</td>
+                            <td>${palpites.Matheus.torcedor.time1}-${palpites.Matheus.torcedor.time2} / ${palpites.Matheus.realista.time1}-${palpites.Matheus.realista.time2}</td>
+                            <td>${resultado.time1}-${resultado.time2}</td></tr>`;
+    });
 }
