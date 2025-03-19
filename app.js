@@ -72,7 +72,7 @@ function registrarResultado() {
         jogo.resultado = resultado;
 
         for (let user of ['Vitor', 'Matheus']) {
-            if (comparaPlacar(resultado, jogo[user].torcedor) || comparaPlacar(resultado, jogo[user].realista)) {
+            if (comparaPlacar(resultado, jogo[user]?.torcedor) || comparaPlacar(resultado, jogo[user]?.realista)) {
                 pontuacao[user]++;
                 alert(`${user} pontuou!`);
             }
@@ -83,6 +83,9 @@ function registrarResultado() {
 
         atualizarRanking();
         carregarHistorico();
+
+        // Agora adicionamos a opção de salvar no servidor
+        salvarHistoricoNoServidor(jogo);
     } else {
         alert('Erro: Partida não encontrada no histórico.');
     }
@@ -90,8 +93,8 @@ function registrarResultado() {
 
 function pegarPlacar(id1, id2) {
     return {
-        time1: parseInt(document.getElementById(id1).value) || 0,
-        time2: parseInt(document.getElementById(id2).value) || 0
+        time1: parseInt(document.getElementById(id1)?.value) || 0,
+        time2: parseInt(document.getElementById(id2)?.value) || 0
     };
 }
 
@@ -100,7 +103,7 @@ function validarPlacar(placar) {
 }
 
 function comparaPlacar(p1, p2) {
-    return p1.time1 === p2.time1 && p1.time2 === p2.time2;
+    return p1?.time1 === p2?.time1 && p1?.time2 === p2?.time2;
 }
 
 function atualizarRanking() {
@@ -119,31 +122,30 @@ function carregarHistorico() {
     `;
 
     historico.forEach(jogo => {
+        if (!jogo.Vitor || !jogo.Matheus) return; // Evita erro caso algum jogo esteja incompleto
+
         let resultado = jogo.resultado ? `${jogo.resultado.time1} x ${jogo.resultado.time2}` : "Aguardando";
         tabela.innerHTML += `
             <tr>
                 <td>${jogo.partida}</td>
-                <td>${jogo.Vitor.torcedor.time1}x${jogo.Vitor.torcedor.time2} / ${jogo.Vitor.realista.time1}x${jogo.Vitor.realista.time2}</td>
-                <td>${jogo.Matheus.torcedor.time1}x${jogo.Matheus.torcedor.time2} / ${jogo.Matheus.realista.time1}x${jogo.Matheus.realista.time2}</td>
+                <td>${jogo.Vitor?.torcedor?.time1 ?? '-'}x${jogo.Vitor?.torcedor?.time2 ?? '-'} /
+                    ${jogo.Vitor?.realista?.time1 ?? '-'}x${jogo.Vitor?.realista?.time2 ?? '-'}</td>
+                <td>${jogo.Matheus?.torcedor?.time1 ?? '-'}x${jogo.Matheus?.torcedor?.time2 ?? '-'} /
+                    ${jogo.Matheus?.realista?.time1 ?? '-'}x${jogo.Matheus?.realista?.time2 ?? '-'}</td>
                 <td>${resultado}</td>
             </tr>
         `;
     });
 }
 
-// 🔹 NOVO: Função para salvar no PHP
-function salvarNoServidor() {
-    fetch('https://palpites-timao.vercel.app/', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(historico)
+// Função para enviar os dados ao PHP
+function salvarHistoricoNoServidor(jogo) {
+    fetch("/api/salvar_historico.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(jogo)
     })
     .then(response => response.json())
-    .then(data => alert(data.message))
-    .catch(error => console.error('Erro ao salvar:', error));
+    .then(data => console.log("Servidor:", data))
+    .catch(error => console.error("Erro ao salvar no servidor:", error));
 }
-
-// 🔹 Botão "Adicionar Partida ao Histórico"
-document.body.innerHTML += '<button onclick="salvarNoServidor()">Adicionar Partida ao Histórico</button>';

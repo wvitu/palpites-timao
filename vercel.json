@@ -1,6 +1,5 @@
 {
     "routes": [
-      { "src": "/salvar_historico.php", "dest": "/api/salvar_historico.php" }
+      { "src": "/api/(.*)", "dest": "/api/$1" }
     ]
   }
-  
